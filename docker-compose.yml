@@ -1,0 +1,55 @@
+version: "3.9"
+services:
+  web:
+    # container_name: "nginx"
+    build:
+      dockerfile: "./container/web/Dockerfile"
+    ports:
+      - "80:80"
+    volumes:
+      - "./src/php:/var/www/html"
+      - "vendor:/var/www/html/vendor"
+      - "./work:/work"
+  php:
+    # container_name: "laravel"
+    build:
+      dockerfile: "./container/php/Dockerfile"
+    ports:
+      - "9000:9000"
+      - "5173:5173"
+    volumes:
+      - "./src/php:/var/www/html"
+      - "vendor:/var/www/html/vendor"
+      - "./work:/work"
+  db1:
+    # container_name: "postgres"
+    image: postgres:14-alpine
+    restart: always
+    shm_size: 256mb
+    ports:
+      - 5432:5432
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "postgres"]
+    volumes:
+      - "./db1:/var/lib/postgresql/data"
+      - "./work:/work"
+    environment:
+      - "POSTGRES_HOST_AUTH_METHOD=${POSTGRES_HOST_AUTH_METHOD}"
+      - "POSTGRES_USER=${POSTGRES_USER}"
+      - "POSTGRES_DB=${POSTGRES_DB}"
+      - "POSTGRES_PASSWORD=${POSTGRES_PASSWORD}"
+  pgadmin:
+    # container_name: pgadmin
+    image: dpage/pgadmin4
+    ports:
+      - 8888:80
+    volumes:
+      - "./pgadmin:/var/lib/pgadmin"
+      - "./work:/work"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: example@example.com
+      PGADMIN_DEFAULT_PASSWORD: pass
+    depends_on:
+      - db1
+volumes:            # 追加
+  vendor:     # 追加
