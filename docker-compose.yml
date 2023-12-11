@@ -21,6 +21,9 @@ services:
       - "./src/php:/var/www/html"
       - "vendor:/var/www/html/vendor"
       - "./work:/work"
+      - "./container/php/log:/var/log"
+    extra_hosts:
+      - "host.docker.internal:host-gateway" # 追加
   db1:
     # container_name: "postgres"
     image: postgres:14-alpine
@@ -51,5 +54,5 @@ services:
       PGADMIN_DEFAULT_PASSWORD: pass
     depends_on:
       - db1
-volumes:            # 追加
-  vendor:     # 追加
+volumes: # 追加
+  vendor: # 追加
