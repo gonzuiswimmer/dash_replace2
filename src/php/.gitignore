@@ -3,6 +3,7 @@
 /public/hot
 /public/storage
 /vendor
+/coverage
 .env
 .env.backup
 .env.production
