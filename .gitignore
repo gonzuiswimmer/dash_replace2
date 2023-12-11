@@ -3,4 +3,5 @@ db2
 pgadmin
 phpmyadmin
 work
+container/php/log
 .DS_Store

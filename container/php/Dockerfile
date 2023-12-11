@@ -8,6 +8,9 @@ RUN apt-get install -y zlib1g-dev \
     libpng-dev \
     libfreetype6-dev \
     libjpeg62-turbo-dev
+# install xdebug
+RUN pecl install xdebug && \
+    docker-php-ext-enable xdebug
 RUN docker-php-ext-configure \
     gd --with-freetype=/usr/include --with-jpeg=/usr/include
 RUN docker-php-ext-install pdo_pgsql pdo_mysql zip gd mysqli
