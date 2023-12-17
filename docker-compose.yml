@@ -62,7 +62,7 @@ services:
       - "3000:3000"
     volumes:
       - "./src/frontend:/var/www/nuxt"
-      - node_modules_volume:/src/node_modules
+      - node_modules_volume:/src/frontend/node_modules
     tty: true
     environment:
       - HOST=0.0.0.0
