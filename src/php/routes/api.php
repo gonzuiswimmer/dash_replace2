@@ -2,6 +2,9 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Auth\LoginController;
+
+use function Pest\Laravel\json;
 
 /*
 |--------------------------------------------------------------------------
@@ -13,6 +16,13 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+
+// nuxtとのapi通信
+// SPA 認証
+Route::prefix('auth')->group(function(){
+    Route::post('/login',[LoginController::class,'login']);
+    Route::post('/logout',[LoginController::class,'logout']);
+});
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
