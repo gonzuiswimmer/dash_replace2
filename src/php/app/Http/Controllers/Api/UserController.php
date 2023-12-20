@@ -15,7 +15,6 @@ class UserController extends Controller
         $recentReports = SearchService::recentMonthlyReports($request);
         $reportsOfFollowingUser = SearchService::reportsOfFollowingUser($request);
 
-        return response()->json(json_encode([$announcements,$recentReports,$reportsOfFollowingUser]), 200);
-        // return view('top',compact('announcements','recentReports','reportsOfFollowingUser'));
+        return response()->json([$announcements,$recentReports,$reportsOfFollowingUser], 200);
     }
 }
