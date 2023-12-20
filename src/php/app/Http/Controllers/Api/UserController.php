@@ -11,7 +11,7 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
-        $announcements = Announcement::orderBy('created_at','DESC')->paginate(3);
+        $announcements = Announcement::orderBy('created_at','DESC')->take(3)->get();
         $recentReports = SearchService::recentMonthlyReports($request);
         $reportsOfFollowingUser = SearchService::reportsOfFollowingUser($request);
 
