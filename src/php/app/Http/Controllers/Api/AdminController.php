@@ -2,16 +2,17 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
-use App\Services\SearchService;
 use App\Models\User;
+use App\Models\UserProfile;
 use App\Models\UserRole;
 use App\Models\Department;
 use App\Http\Requests\AdminProfileUpdateRequest;
 use App\Http\Requests\RegisterRequest;
-use App\Models\UserProfile;
+use App\Http\Controllers\Controller;
+use App\Services\SearchService;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
 class AdminController extends Controller
@@ -31,20 +32,6 @@ class AdminController extends Controller
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function create()
-    {
-        $departments = Department::all();
-
-        return view('admin/users/create', [
-            'departments' => $departments
-        ]);
-    }
-
-    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -52,22 +39,29 @@ class AdminController extends Controller
      */
     public function store(RegisterRequest $request)
     {
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-            'department_id' => $request->department_id,
-            'beginner_flg' => $request->beginner_flg,
-            'entry_date' => $request->entry_date,
-            'gender' => $request->gender
-        ]);
+        DB::beginTransaction();
+        try {
+            $user = User::create([
+                'name' => $request->name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'department_id' => $request->department_id,
+                'beginner_flg' => $request->beginner_flg,
+                'entry_date' => $request->entry_date,
+                'gender' => $request->gender
+            ]);
 
-        UserProfile::create([
-            'user_id' => $user->id,
-            'blood_type' => 0
-        ]);
+            UserProfile::create([
+                'user_id' => $user->id,
+                'blood_type' => 0
+            ]);
 
-        return to_route('admin.top')->with('status', '登録しました');
+            DB::commit();
+            return response()->json(['CreateUserResult' => true], 200);
+        } catch (\Exception $e){
+            DB::rollBack();
+            return response()->json(['CreateUserResult' => false, 'message' => $e], 200);
+        }
     }
 
     /**
