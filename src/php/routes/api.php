@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\AdminController;
 
 use function Pest\Laravel\json;
 
@@ -35,6 +36,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('/admin')->middleware('judgeApiAdmin')->group(function () {
         Route::prefix('/users')->group(function () {
             Route::get('/', [AdminController::class, 'users'])->name('admin.users');
+            Route::get('/getDepartments',[AdminController::class,'getDepartments']);
             Route::get('/create', [AdminController::class, 'create'])->name('admin.users.create');
             Route::post('/store', [AdminController::class, 'store'])->name('admin.users.store');
             Route::get('/show/{id}', [AdminController::class, 'show'])->name('admin.users.show');
