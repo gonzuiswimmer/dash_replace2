@@ -65,18 +65,6 @@ class AdminController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @param  int  $id
-     * @return \Illuminate\Http\Response
-     */
-    public function show($id)
-    {
-        $user = User::find($id);
-        return view('admin/users/show', compact('user'));
-    }
-
-    /**
      * Show the form for editing the specified resource.
      *
      * @param  int  $id
@@ -146,11 +134,18 @@ class AdminController extends Controller
     public function destroy($id)
     {
         $user = User::find($id);
-        $user->deleted_at = Carbon::now();
 
-        $user->save();
+        DB::beginTransaction();
+        try{
+            $user->deleted_at = Carbon::now();
+            $user->save();
+            DB::commit();
+            return response()->json(['DestroyUserResult' => true], 200);
+        } catch (\Exception $e){
+            DB::rollBack();
+            return response()->json(['DestroyUserResult' => false, 'message' => $e], 200);
+        }
 
-        return to_route('admin.top')->with('status', '削除しました');
     }
 
     public function roles()
