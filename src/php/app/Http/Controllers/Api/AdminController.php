@@ -86,17 +86,17 @@ class AdminController extends Controller
     {
         $user = User::find($id);
         $user_profile = UserProfile::where('user_id', $user->id)->first();
-        $departments = Department::all();
         $followings = $user->followings()->orderBy('user_id')->get();
         $followers = $user->followers()->orderBy('followed_user_id')->get();
 
-        return view('admin/users/edit', [
-            'user' => $user,
-            'user_profile' => $user_profile,
-            'departments' => $departments,
-            'followings' => $followings,
-            'followers' => $followers,
-        ]);
+        return response()->json(
+            [
+                'user' => $user,
+                'user_profile' => $user_profile,
+                'followings' => $followings,
+                'followers' => $followers,
+            ],
+            200);
     }
 
     /**
@@ -125,10 +125,16 @@ class AdminController extends Controller
         $user_profile->self_introduction = $request->self_introduction;
 
 
-        $user->save();
-        $user_profile->save();
-
-        return redirect()->back()->with('status', '編集しました');
+        DB::beginTransaction();
+        try{
+            $user->save();
+            $user_profile->save();
+            DB::commit();
+            return response()->json(['UpdateUserResult' => true], 200);
+        } catch (\Exception $e){
+            DB::rollBack();
+            return response()->json(['UpdateUserResult' => false, 'message' => $e], 200);
+        }
     }
 
     /**
