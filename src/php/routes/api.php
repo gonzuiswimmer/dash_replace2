@@ -38,7 +38,6 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/', [AdminController::class, 'users'])->name('admin.users');
             Route::get('/getDepartments',[AdminController::class,'getDepartments']);
             Route::post('/store', [AdminController::class, 'store'])->name('admin.users.store');
-            Route::get('/show/{id}', [AdminController::class, 'show'])->name('admin.users.show');
             Route::get('/edit/{id}', [AdminController::class, 'edit'])->name('admin.users.edit');
             Route::patch('/update/{id}', [AdminController::class, 'update'])->name('admin.users.update');
             Route::patch('/destroy/{id}', [AdminController::class, 'destroy'])->name('admin.users.destroy');
