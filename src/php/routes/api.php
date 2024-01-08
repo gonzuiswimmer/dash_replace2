@@ -43,7 +43,6 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::patch('/destroy/{id}', [AdminController::class, 'destroy'])->name('admin.users.destroy');
 
             Route::get('/roles', [AdminController::class, 'roles'])->name('admin.users.role');
-            Route::get('/roles/new', [AdminController::class, 'registerNewRole'])->name('admin.users.registerNewRole');
             Route::post('/roles/new/{id}', [AdminController::class, 'storeNewRole'])->name('admin.users.storeNewRole');
             Route::delete('/roles/delete/{id}', [AdminController::class, 'deleteAdminRole'])->name('admin.users.deleteAdminRole');
         });
