@@ -150,11 +150,10 @@ class AdminController extends Controller
 
     public function roles()
     {
-        $users = User::whereHas('role', function ($query) {
+        $users = User::with(['department'])->whereHas('role', function ($query) {
             $query->where('role', '=', '0');
-        })
-            ->get();
-        return view('admin/users/showRoles', compact('users'));
+        })->get();
+        return response()->json(['users' => $users], 200);
     }
 
     public function registerNewRole(Request $request)
@@ -181,6 +180,21 @@ class AdminController extends Controller
             return to_route('admin.users.role')->with('status', '既に登録済みです');
         } else {
             return to_route('admin.users.role')->with('status', '登録できないユーザーです');
+        }
+    }
+
+    public function deleteAdminRole($id)
+    {
+        $userRole = UserRole::where('user_id', $id)->first();
+
+        DB::beginTransaction();
+        try{
+            $userRole->delete();
+            DB::commit();
+            return response()->json(['destroyAdminUserRoleResult' => true], 200);
+        } catch (\Exception $e){
+            DB::rollBack();
+            return response()->json(['destroyAdminUserRoleResult' => false, 'message' => $e], 200);
         }
     }
 }
