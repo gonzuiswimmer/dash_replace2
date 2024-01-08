@@ -156,30 +156,19 @@ class AdminController extends Controller
         return response()->json(['users' => $users], 200);
     }
 
-    public function registerNewRole(Request $request)
-    {
-        $users = collect([]);
-        $request->merge(['status' => 'working']);
-        if (isset($request->name)) {
-            $users = SearchService::searchUser($request);
-        }
-
-        return view('admin/users/registerRolePage', compact('users'));
-    }
-
     public function storeNewRole($id)
     {
         $user = User::with(['role'])->find($id);
-        if (!is_null($user->deleted_at) && is_null($user->role)) {
+        if (is_null($user->deleted_at) && is_null($user->role)) {
             $userRole = UserRole::create([
                 'user_id' => $id,
                 'role' => 0,
             ]);
-            return to_route('admin.users.role')->with('status', '登録しました');
+            return response()->json(['addAdminUsersRoleResult' => '登録しました'], 200);
         } else if ($user->role->role === 0) {
-            return to_route('admin.users.role')->with('status', '既に登録済みです');
+            return response()->json(['addAdminUsersRoleResult' => '既に登録済みです'], 200);
         } else {
-            return to_route('admin.users.role')->with('status', '登録できないユーザーです');
+            return response()->json(['addAdminUsersRoleResult' => '登録できないユーザーです'], 200);
         }
     }
 
